@@ -15,7 +15,11 @@ Solidity framework for extending any contract with counterfactual revocable-dele
 - [A series of conversations about the framework on YouTube](https://www.youtube.com/watch?v=Sh1-epThZV0&list=PLJP4kXm9a01qRJaNzCU47gOzkn1eNAlFO).
 - [A reference app called MobyMask](https://github.com/delegatable/MobyMask).
 - [A JS library for creating & redeeming delegations](https://www.npmjs.com/package/eth-delegatable-utils).
-- [A Delegatable Facet for Diamonds](./contracts/diamond/README.md)
+
+There are three general ways to integrate Delegatable into a Solidity project
+- Inherit from the [Delegatable.sol](./contracts/Delegatable.sol) contract. (Most gas up front, cheapest per tx).
+- Use our [trusted relay](./docs/relay.md) to allow your contract to accept delegated messages from a global relay contract.
+- If your contract uses the ERC-2535 Diamond standard, you can add [A Delegatable Facet for Diamonds](./contracts/diamond/README.md)
 
 ## Deployment
 
