@@ -1,6 +1,6 @@
 {
   "name": "delegatable-sol",
-  "version": "0.0.0-beta.0",
+  "version": "0.0.0-beta.0.1",
   "description": "Solidity framework for extending any contract with counterfactual revocable-delegation.",
   "main": "index.js",
   "license": "MIT",
