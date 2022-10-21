@@ -74,8 +74,7 @@ describe("TimestampAfterEnforcer", () => {
       [
         {
           enforcer: TimestampEnforcer.address,
-          terms:
-            "0x0000000000000000",
+          terms: "0x0000000000000000",
         },
       ]
     );
@@ -125,8 +124,7 @@ describe("TimestampAfterEnforcer", () => {
       [
         {
           enforcer: TimestampEnforcer.address,
-          terms:
-            "0x00000007915eda10",
+          terms: "0x00000007915eda10",
         },
       ]
     );

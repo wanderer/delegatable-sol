@@ -16,12 +16,11 @@ contract TimestampAfterEnforcer is CaveatEnforcer {
         Transaction calldata transaction,
         bytes32 delegationHash
     ) public override returns (bool) {
-        uint64 timestampThreshold = BytesLib.toUint64(terms, 0);    
+        uint64 timestampThreshold = BytesLib.toUint64(terms, 0);
         if (timestampThreshold < block.timestamp) {
             return true;
         } else {
             revert("TimestampAfterEnforcer:early-delegation");
         }
-    
     }
 }
