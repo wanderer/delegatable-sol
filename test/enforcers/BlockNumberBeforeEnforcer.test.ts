@@ -78,7 +78,7 @@ describe("BlockNumberBeforeEnforcer", () => {
           enforcer: BlockNumberEnforcer.address,
           terms:
             // "0x0000000000000000000000000000000100000000000000000000000000000032",
-            "0x0000000000000032"
+            "0x0000000000000032",
         },
       ]
     );
@@ -140,7 +140,7 @@ describe("BlockNumberBeforeEnforcer", () => {
           enforcer: BlockNumberEnforcer.address,
           terms:
             // "0x0000000000000000000000000000000100000000000000000000000000000000",
-            "0x0000000000000000"
+            "0x0000000000000000",
         },
       ]
     );
