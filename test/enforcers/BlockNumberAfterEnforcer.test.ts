@@ -76,8 +76,7 @@ describe("BlockNumberAfterEnforcer", () => {
       [
         {
           enforcer: BlockNumberEnforcer.address,
-          terms:
-            "0x0000000000000000"
+          terms: "0x0000000000000000",
         },
       ]
     );
@@ -126,8 +125,7 @@ describe("BlockNumberAfterEnforcer", () => {
       [
         {
           enforcer: BlockNumberEnforcer.address,
-          terms:
-            "0x0000000000000032"
+          terms: "0x0000000000000032",
         },
       ]
     );
@@ -163,5 +161,4 @@ describe("BlockNumberAfterEnforcer", () => {
       ])
     ).to.be.revertedWith("BlockNumberAfterEnforcer:early-delegation");
   });
-
 });
