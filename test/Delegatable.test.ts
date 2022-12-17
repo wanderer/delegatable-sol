@@ -53,36 +53,6 @@ describe("Delegatable", () => {
     delegatableUtils = generateUtil(CONTRACT_INFO);
   });
 
-  it("INVOKE setPurpose() from non-owner receives ownable error", async () => {
-    const INVOCATION_MESSAGE = {
-      replayProtection: {
-        nonce: "0x01",
-        queue: "0x00",
-      },
-      batch: [
-        {
-          authority: [],
-          transaction: {
-            to: Delegatable.address,
-            gasLimit: "21000000000000",
-            data: (
-              await Delegatable.populateTransaction.setPurpose("To delegate!")
-            ).data,
-          },
-        },
-      ],
-    };
-    const invocation = delegatableUtils.signInvocation(INVOCATION_MESSAGE, pk0);
-    await expect(
-      Delegatable.invoke([
-        {
-          signature: invocation.signature,
-          invocations: invocation.invocations,
-        },
-      ])
-    ).to.be.revertedWith("Ownable: caller is not the owner");
-  });
-
   it("READ getDelegationTypedDataHash(Delegation memory delegation)", async () => {
     const DELEGATION = {
       delegate: wallet0.address,
@@ -125,6 +95,35 @@ describe("Delegatable", () => {
       "0xf6e94ae88b8b72d51444924d7cf26f28b4eaf7d5d274dffbdc83cb92cb4eeac5"
     );
   });
+
+  it("INVOKE alwaysFail() bubbles out error", async () => {
+    const INVOCATION_MESSAGE = {
+      replayProtection: {
+        nonce: "0x01",
+        queue: "0x00",
+      },
+      batch: [
+        {
+          authority: [],
+          transaction: {
+            to: Delegatable.address,
+            gasLimit: "21000000000000",
+            data: (await Delegatable.populateTransaction.alwaysFail()).data,
+          },
+        },
+      ],
+    };
+    const invocation = delegatableUtils.signInvocation(INVOCATION_MESSAGE, pk0);
+    await expect(
+      Delegatable.invoke([
+        {
+          signature: invocation.signature,
+          invocations: invocation.invocations,
+        },
+      ])
+    ).to.be.revertedWith("I always fail");
+  });
+
   it("READ getEIP712DomainHash(string,string,uint256,address)", async () => {});
   it("READ verifyDelegationSignature(SignedDelegation memory signedDelegation)`", async () => {
     const _delegation = generateDelegation(
