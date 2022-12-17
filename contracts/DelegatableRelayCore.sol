@@ -35,6 +35,7 @@ abstract contract DelegatableRelayCore is EIP712Decoder {
         multiNonce[intendedSender][queue] = nonce;
     }
 
+
     function _execute(
         address to,
         bytes memory data,
@@ -42,8 +43,35 @@ abstract contract DelegatableRelayCore is EIP712Decoder {
         address sender
     ) internal returns (bool success) {
         bytes memory full = abi.encodePacked(data, sender);
+        bytes memory errorMessage;
+        (success, errorMessage) = address(to).call{gas: gasLimit}(full);
+
+        if (!success) {
+            if (errorMessage.length > 0) {
+                string memory reason = extractRevertReason(errorMessage);
+                revert(reason);
+            } else {
+                revert("DelegatableCore::execution-failed");
+            }
+        }
+    }
+
+    function extractRevertReason(bytes memory revertData)
+        internal
+        pure
+        returns (string memory reason)
+    {
+        uint256 l = revertData.length;
+        if (l < 68) return "";
+        uint256 t;
         assembly {
-            success := call(gasLimit, to, 0, add(full, 0x20), mload(full), 0, 0)
+            revertData := add(revertData, 4)
+            t := mload(revertData) // Save the content of the length slot
+            mstore(revertData, sub(l, 4)) // Set proper length
+        }
+        reason = abi.decode(revertData, (string));
+        assembly {
+            mstore(revertData, t) // Restore the content of the length slot
         }
     }
 
