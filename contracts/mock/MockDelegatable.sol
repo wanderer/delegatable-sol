@@ -13,6 +13,10 @@ contract MockDelegatable is Delegatable, Ownable {
         purpose = purpose_;
     }
 
+    function alwaysFail() public pure {
+        revert("I always fail");
+    }
+
     function _msgSender()
         internal
         view
