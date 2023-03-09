@@ -12,6 +12,7 @@
 
 # KEEP SAFE
 .env
+.envrc
 
 # Development
 abis
