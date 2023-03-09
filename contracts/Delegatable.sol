@@ -136,7 +136,10 @@ abstract contract Delegatable is IDelegatable, DelegatableCore {
                 invocationSigner,
                 signedInvocations[i].invocations.replayProtection
             );
-            success = _invoke(signedInvocation.invocations.batch, invocationSigner);
+            success = _invoke(
+                signedInvocation.invocations.batch,
+                invocationSigner
+            );
         }
     }
 
