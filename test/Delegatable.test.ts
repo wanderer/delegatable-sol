@@ -16,8 +16,10 @@ describe("Delegatable", () => {
   let signer0: SignerWithAddress;
   let wallet0: Wallet;
   let wallet1: Wallet;
+  let wallet2: Wallet;
   let pk0: string;
   let pk1: string;
+  let pk2: string;
 
   let AllowedMethodsEnforcer: Contract;
   let AllowedMethodsEnforcerFactory: ContractFactory;
@@ -26,7 +28,7 @@ describe("Delegatable", () => {
 
   before(async () => {
     [signer0] = await getSigners();
-    [wallet0, wallet1] = getPrivateKeys(
+    [wallet0, wallet1, wallet2] = getPrivateKeys(
       signer0.provider as unknown as Provider
     );
     DelegatableFactory = await ethers.getContractFactory("MockDelegatable");
@@ -35,6 +37,7 @@ describe("Delegatable", () => {
     );
     pk0 = wallet0._signingKey().privateKey;
     pk1 = wallet1._signingKey().privateKey;
+    pk2 = wallet2._signingKey().privateKey;
   });
 
   beforeEach(async () => {
@@ -167,6 +170,9 @@ describe("Delegatable", () => {
     );
   });
 
+  // TODO: These contractInvoke tests are not setup correctly
+  // The caller/sender needs to be a contract not an EOA
+  // Put in a temp fix connecting the caller as the delegate
   describe("contractInvoke(Invocation[] calldata batch)", () => {
     it("should SUCCEED to EXECUTE batched Invocations", async () => {
       expect(await Delegatable.purpose()).to.eq("What is my purpose?");
@@ -176,7 +182,7 @@ describe("Delegatable", () => {
         pk0,
         wallet1.address
       );
-      await Delegatable.contractInvoke([
+      await Delegatable.connect(wallet1).contractInvoke([
         {
           authority: [_delegation],
           transaction: {
@@ -252,9 +258,11 @@ describe("Delegatable", () => {
           },
         ],
       };
+
+      // This should be signed by the delegate - ie wallet1
       const invocation = delegatableUtils.signInvocation(
         INVOCATION_MESSAGE,
-        pk0
+        pk1
       );
       await Delegatable.invoke([
         {
@@ -263,6 +271,49 @@ describe("Delegatable", () => {
         },
       ]);
       expect(await Delegatable.purpose()).to.eq("To delegate!");
+    });
+    it("should FAIL to EXECUTE batched SignedInvocation with Improper Signer", async () => {
+      expect(await Delegatable.purpose()).to.eq("What is my purpose?");
+      const _delegation = generateDelegation(
+        CONTACT_NAME,
+        Delegatable,
+        pk0,
+        wallet1.address
+      );
+      const INVOCATION_MESSAGE = {
+        replayProtection: {
+          nonce: "0x01",
+          queue: "0x00",
+        },
+        batch: [
+          {
+            authority: [_delegation],
+            transaction: {
+              to: Delegatable.address,
+              gasLimit: "21000000000000",
+              data: (
+                await Delegatable.populateTransaction.setPurpose("To delegate!")
+              ).data,
+            },
+          },
+        ],
+      };
+
+      // This should be signed by the delegate - ie wallet1
+      // This should fail since wallet2 is trying to invoke wallet1's delegation
+      const invocation = delegatableUtils.signInvocation(
+        INVOCATION_MESSAGE,
+        pk2
+      );
+
+      await expect(
+        Delegatable.invoke([
+          {
+            signature: invocation.signature,
+            invocations: invocation.invocations,
+          },
+        ])
+      ).to.be.revertedWith("DelegatableCore:invalid-delegate");
     });
   });
 });
