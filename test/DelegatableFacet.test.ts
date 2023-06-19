@@ -113,6 +113,9 @@ describe("DelegatableFacet", () => {
     delegatableUtils = generateUtil(CONTRACT_INFO);
   });
 
+  // TODO: These contractInvoke tests are not setup correctly
+  // The caller/sender needs to be a contract not an EOA
+  // Put in a temp fix connecting the caller as the delegate
   describe("contractInvoke(Invocation[] calldata batch)", () => {
     it("should SUCCEED to EXECUTE batched Invocations", async () => {
       const purpose = await Diamond.purpose();
@@ -125,7 +128,7 @@ describe("DelegatableFacet", () => {
         wallet1.address
       );
 
-      await Diamond.contractInvoke([
+      await Diamond.connect(wallet1).contractInvoke([
         {
           authority: [_delegation],
           transaction: {
@@ -198,7 +201,7 @@ describe("DelegatableFacet", () => {
       };
       const invocation = delegatableUtils.signInvocation(
         INVOCATION_MESSAGE,
-        pk0
+        pk1
       );
       await Diamond.invoke([
         {
