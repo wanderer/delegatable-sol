@@ -306,12 +306,14 @@ describe("Delegatable", () => {
         pk2
       );
 
-      await expect(Delegatable.invoke([
-        {
-          signature: invocation.signature,
-          invocations: invocation.invocations,
-        },
-      ])).to.be.revertedWith("DelegatableCore:invalid-delegate");
+      await expect(
+        Delegatable.invoke([
+          {
+            signature: invocation.signature,
+            invocations: invocation.invocations,
+          },
+        ])
+      ).to.be.revertedWith("DelegatableCore:invalid-delegate");
     });
   });
 });

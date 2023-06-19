@@ -145,10 +145,7 @@ abstract contract DelegatableCore is EIP712Decoder {
             }
 
             // Verify the delegate at the end of the delegation chain is the signer
-            require(
-                canGrant == sender,
-                "DelegatableCore:invalid-delegate"
-            );
+            require(canGrant == sender, "DelegatableCore:invalid-delegate");
 
             // Here we perform the requested invocation.
             Transaction memory transaction = invocation.transaction;
