@@ -3,7 +3,6 @@ pragma solidity ^0.8.15;
 
 import "../CaveatEnforcer.sol";
 import "../Delegatable.sol";
-import "hardhat/console.sol";
 
 contract RevocationEnforcer is
     CaveatEnforcer,
@@ -29,9 +28,6 @@ contract RevocationEnforcer is
             domainHash
         );
         address sender = _msgSender();
-        console.log("Sender is ", sender);
-        console.log("signer is ", signer);
-        console.log("msg sender is ", msg.sender);
         require(signer == sender, "RevocationEnforcer:invalid-revoker");
         bytes32 delegationHash = GET_SIGNEDDELEGATION_PACKETHASH(
             signedDelegation
